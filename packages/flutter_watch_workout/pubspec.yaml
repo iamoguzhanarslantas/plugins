@@ -1,0 +1,61 @@
+name: flutter_watch_workout
+description: "HealthKit workout sessions for Flutter on Apple Watch: live heart rate, energy and distance, a GPS route, and workouts saved to Health, via dart:ffi."
+version: 0.0.1
+homepage: https://flutterwatch.dev
+repository: https://github.com/flutterwatch/plugins/tree/main/packages/flutter_watch_workout
+issue_tracker: https://github.com/flutterwatch/plugins/issues
+topics:
+  - watchos
+  - ffi
+  - healthkit
+  - workout
+
+environment:
+  # 3.1 is where NativeCallable.listener landed — the push path this package
+  # depends on.
+  sdk: ">=3.1.0 <4.0.0"
+  flutter: ">=3.13.0"
+
+dependencies:
+  ffi: ^2.1.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      watchos:
+        # FFI plugin: the CLI compiles watchos/Classes/*.m into a
+        # static archive force-loaded into the watch binary; Dart
+        # resolves the exported symbols via DynamicLibrary.process().
+        # Method-channel plugins are not supported on watchOS,
+        # so this is the supported plugin model.
+        ffiPlugin: true
+        dartPluginClass: WatchWorkout
+        # C symbols exported for dart:ffi lookup. They survive the link
+        # because the CLI force-loads the plugin archive, each export is
+        # marked used with default visibility, and the CLI keeps global
+        # symbols through the App Store strip.
+        ffiSymbols:
+          - flutter_watch_workout_set_callback
+          - flutter_watch_workout_is_available
+          - flutter_watch_workout_setup_report
+          - flutter_watch_workout_request_authorization
+          - flutter_watch_workout_start
+          - flutter_watch_workout_pause
+          - flutter_watch_workout_resume
+          - flutter_watch_workout_end
+          - flutter_watch_workout_discard
+          - flutter_watch_workout_recover
+          - flutter_watch_workout_state
+          - flutter_watch_workout_metrics
+          - flutter_watch_workout_poll_locations
+          - flutter_watch_workout_dropped_location_count
+          - flutter_watch_workout_take_request_result
+          - flutter_watch_workout_take_last_error
+          - flutter_watch_workout_release

@@ -45,6 +45,22 @@ companion app needs when the counterpart is asleep.
 See its [`example/`](packages/flutter_watch_link/example) for a worked
 companion app — one `main.dart`, running on both devices.
 
+## Workouts: HealthKit sessions
+
+Another first-party package, for the same reason: no upstream Flutter plugin
+runs an `HKWorkoutSession`, and the ones near it have no federated platform
+interface to implement.
+
+| Plugin | What it is | Backend |
+|---|---|---|
+| [`flutter_watch_workout`](packages/flutter_watch_workout) | First-party. Start, pause, resume and end a workout; live heart rate, energy and distance; an optional GPS route; the workout and its route saved to Health. Checked on the Simulator, not yet on a watch. | `HKWorkoutSession` + `HKLiveWorkoutBuilder`, `HKWorkoutRouteBuilder` fed by `CLLocationManager` |
+
+[`health`](https://pub.dev/packages/health) reads and writes samples but
+starts no session; [`workout`](https://pub.dev/packages/workout) targets Wear
+OS and Tizen. A workout app needs the HealthKit entitlement and the
+`workout-processing` background mode, which `flutter-watchos create` does not
+add; the package's README says how.
+
 ## List of plugins
 
 Every plugin below has a watchOS implementation, and each package's example

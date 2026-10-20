@@ -45,6 +45,16 @@ companion app needs when the counterpart is asleep.
 See its [`example/`](packages/flutter_watch_link/example) for a worked
 companion app — one `main.dart`, running on both devices.
 
+## Speech: text to speech
+
+Another first-party package, because [`flutter_tts`](https://pub.dev/packages/flutter_tts)
+cannot be implemented from outside: it is a single method-channel plugin
+with no platform interface, and method channels do not run on watchOS.
+
+| Plugin | What it is | Backend |
+|---|---|---|
+| [`flutter_watch_speech`](packages/flutter_watch_speech) | First-party. Queued utterances in any installed voice, with rate, pitch and volume, other audio ducked while speech plays, and an event per utterance. Checked on the Simulator, not yet on a watch. | `AVSpeechSynthesizer` |
+
 ## List of plugins
 
 Every plugin below has a watchOS implementation, and each package's example
@@ -115,7 +125,7 @@ watch** — plugins built on those are portable, not excluded.
 
 These have a watchOS-viable native backend and are good future additions;
 they are simply out of scope for now (large surface or partial support):
-`sqflite` (SQLite), `flutter_tts` (AVFoundation),
+`sqflite` (SQLite),
 `wakelock_plus` (only a session-typed `WKExtendedRuntimeSession`, not a
 general idle-timer disable), and `cloud_firestore` (the Firebase Apple SDK
 ships Firestore's core as a prebuilt binary with no watchOS slice, so a

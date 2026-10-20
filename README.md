@@ -45,6 +45,15 @@ companion app needs when the counterpart is asleep.
 See its [`example/`](packages/flutter_watch_link/example) for a worked
 companion app — one `main.dart`, running on both devices.
 
+## Maps: a route on MapKit
+
+Another first-party package: there is no Google Maps SDK for watchOS (see
+"Evaluated but not provided" below), so this one is its own API on MapKit.
+
+| Plugin | What it is | Backend |
+|---|---|---|
+| [`flutter_watch_map`](packages/flutter_watch_map) | First-party. A map as a native platform view, with a route polyline, the wearer's location, and the camera framing the route or following the wearer. Checked on the Simulator, not yet on a watch. | SwiftUI MapKit `Map` + `MapPolyline` |
+
 ## List of plugins
 
 Every plugin below has a watchOS implementation, and each package's example

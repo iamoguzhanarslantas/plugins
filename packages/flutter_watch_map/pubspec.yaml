@@ -1,0 +1,50 @@
+name: flutter_watch_map
+description: "A MapKit map for Flutter on Apple Watch: a native SwiftUI platform view with a route polyline, the wearer's location and camera control, via dart:ffi."
+version: 0.0.1
+homepage: https://flutterwatch.dev
+repository: https://github.com/flutterwatch/plugins/tree/main/packages/flutter_watch_map
+issue_tracker: https://github.com/flutterwatch/plugins/issues
+topics:
+  - watchos
+  - ffi
+  - maps
+  - mapkit
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+  # Color.toARGB32.
+  flutter: ">=3.27.0"
+
+dependencies:
+  ffi: ^2.1.0
+  flutter:
+    sdk: flutter
+  # WatchPlatformView.
+  flutter_watchos: ^0.1.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      watchos:
+        # FFI plugin: the CLI compiles watchos/Views/*.swift into the watch
+        # binary; Dart resolves the `@_cdecl` functions via
+        # DynamicLibrary.process(). Method-channel plugins are not
+        # supported on watchOS, so this is the supported plugin model.
+        ffiPlugin: true
+        dartPluginClass: WatchMapPlugin
+        # C symbols exported for dart:ffi lookup, defined in Swift with
+        # @_cdecl. The CLI keeps global symbols through the App Store strip.
+        ffiSymbols:
+          - flutter_watch_map_register_views
+          - flutter_watch_map_create
+          - flutter_watch_map_dispose
+          - flutter_watch_map_set_route
+          - flutter_watch_map_set_shows_user
+          - flutter_watch_map_fit_route
+          - flutter_watch_map_follow_user
+          - flutter_watch_map_set_camera

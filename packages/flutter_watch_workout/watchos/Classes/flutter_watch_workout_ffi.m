@@ -210,6 +210,14 @@ static NSArray<NSString*>* _missingKeys(BOOL route) {
     return missing;
 }
 
+// Whether the route may keep recording with the app in the background:
+// CoreLocation asserts when allowsBackgroundLocationUpdates turns on without
+// "location" in UIBackgroundModes, and reads only that key, on watchOS too.
+static BOOL _backgroundLocation(void) {
+    id modes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"];
+    return [modes isKindOfClass:[NSArray class]] && [modes containsObject:@"location"];
+}
+
 static NSDictionary* _missingKeysError(NSArray<NSString*>* missing) {
     return _error(@"missingUsageDescription",
                   [NSString stringWithFormat:@"The watch app's Info.plist has no %@.",
@@ -256,6 +264,7 @@ static FWWWorkout* _workout(void) {
         manager.desiredAccuracy = kCLLocationAccuracyBest;
         manager.activityType = CLActivityTypeFitness;
         manager.distanceFilter = kCLDistanceFilterNone;
+        manager.allowsBackgroundLocationUpdates = _backgroundLocation();
         self.locationManager = manager;
     }
     return self.locationManager;
@@ -479,6 +488,7 @@ static FWWWorkout* _workout(void) {
     os_unfair_lock_lock(&_lock);
     _metrics = nil;
     [_locations removeAllObjects];
+    _droppedLocations = 0;
     os_unfair_lock_unlock(&_lock);
 
     NSDate* start = [NSDate date];
@@ -668,6 +678,7 @@ char* flutter_watch_workout_setup_report(void) {
     return _json(@{
         @"missing" : _missingKeys(YES),
         @"workoutProcessing" : @(workoutProcessing),
+        @"backgroundLocation" : @(_backgroundLocation()),
     });
 }
 

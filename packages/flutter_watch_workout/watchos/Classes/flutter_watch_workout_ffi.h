@@ -47,10 +47,13 @@ FWW_EXPORT
 int flutter_watch_workout_is_available(void);
 
 // What the app's Info.plist lacks for a workout, as a JSON object:
-// {"missing": [<key>, ...], "workoutProcessing": <bool>}. `missing` names the
-// usage descriptions HealthKit and CoreLocation terminate an app without;
-// `workoutProcessing` says whether WKBackgroundModes has workout-processing,
-// without which the app is suspended when the wrist goes down.
+// {"missing": [<key>, ...], "workoutProcessing": <bool>,
+// "backgroundLocation": <bool>}. `missing` names the usage descriptions
+// HealthKit and CoreLocation terminate an app without; `workoutProcessing`
+// says whether WKBackgroundModes has workout-processing, without which the
+// app is suspended when the wrist goes down; `backgroundLocation` says
+// whether UIBackgroundModes has location, which lets the route's location
+// updates continue in the background.
 FWW_EXPORT
 char* flutter_watch_workout_setup_report(void);
 

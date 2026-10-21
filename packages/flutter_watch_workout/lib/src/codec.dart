@@ -41,10 +41,10 @@ Duration _seconds(Object? seconds) =>
 
 /// A native `{code, message, nativeCode}` error object.
 WorkoutException decodeError(Map<String, Object?> error) => WorkoutException(
-      error['code'] as String? ?? 'unknown',
-      error['message'] as String? ?? '',
-      nativeCode: (error['nativeCode'] as num?)?.toInt() ?? 0,
-    );
+  error['code'] as String? ?? 'unknown',
+  error['message'] as String? ?? '',
+  nativeCode: (error['nativeCode'] as num?)?.toInt() ?? 0,
+);
 
 /// The `setup_report` JSON.
 WorkoutSetup decodeSetup(String json) {
@@ -55,15 +55,16 @@ WorkoutSetup decodeSetup(String json) {
             .cast<String>()
             .toList(growable: false),
     workoutProcessing: o['workoutProcessing'] == true,
+    backgroundLocation: o['backgroundLocation'] == true,
   );
 }
 
 WorkoutPermission _permission(Object? value) => switch (value) {
-      'authorized' => WorkoutPermission.authorized,
-      'denied' => WorkoutPermission.denied,
-      'notRequested' => WorkoutPermission.notRequested,
-      _ => WorkoutPermission.notDetermined,
-    };
+  'authorized' => WorkoutPermission.authorized,
+  'denied' => WorkoutPermission.denied,
+  'notRequested' => WorkoutPermission.notRequested,
+  _ => WorkoutPermission.notDetermined,
+};
 
 /// A `request_authorization` result.
 WorkoutAuthorization decodeAuthorization(Map<String, Object?> o) =>
@@ -86,26 +87,26 @@ WorkoutMetrics decodeMetrics(String json) {
 
 /// The `poll_locations` JSON array.
 List<WorkoutLocation> decodeLocations(String json) => <WorkoutLocation>[
-      for (final Object? item in jsonDecode(json) as List<Object?>)
-        if (item is Map<Object?, Object?>)
-          WorkoutLocation(
-            latitude: _double(item['latitude']),
-            longitude: _double(item['longitude']),
-            altitude: _double(item['altitude']),
-            horizontalAccuracy: _double(item['horizontalAccuracy']),
-            verticalAccuracy: _double(item['verticalAccuracy']),
-            speed: _double(item['speed']),
-            course: _double(item['course']),
-            timestamp: _time(item['timestamp']),
-          ),
-    ];
+  for (final Object? item in jsonDecode(json) as List<Object?>)
+    if (item is Map<Object?, Object?>)
+      WorkoutLocation(
+        latitude: _double(item['latitude']),
+        longitude: _double(item['longitude']),
+        altitude: _double(item['altitude']),
+        horizontalAccuracy: _double(item['horizontalAccuracy']),
+        verticalAccuracy: _double(item['verticalAccuracy']),
+        speed: _double(item['speed']),
+        course: _double(item['course']),
+        timestamp: _time(item['timestamp']),
+      ),
+];
 
 /// An `end` result.
 WorkoutSummary decodeSummary(Map<String, Object?> o) => WorkoutSummary(
-      uuid: o['uuid'] as String? ?? '',
-      duration: _seconds(o['duration']),
-      activeEnergy: _double(o['activeEnergy']),
-      distance: _double(o['distance']),
-      routePoints: (o['routePoints'] as num?)?.toInt() ?? 0,
-      routeSaved: o['routeSaved'] == true,
-    );
+  uuid: o['uuid'] as String? ?? '',
+  duration: _seconds(o['duration']),
+  activeEnergy: _double(o['activeEnergy']),
+  distance: _double(o['distance']),
+  routePoints: (o['routePoints'] as num?)?.toInt() ?? 0,
+  routeSaved: o['routeSaved'] == true,
+);

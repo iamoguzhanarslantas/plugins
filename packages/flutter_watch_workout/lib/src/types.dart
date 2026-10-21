@@ -106,10 +106,10 @@ class WorkoutConfiguration {
 
   /// The JSON the native side reads.
   Map<String, Object?> toJson() => <String, Object?>{
-        'activity': activity.healthKitValue,
-        'location': location.healthKitValue,
-        'route': recordRoute,
-      };
+    'activity': activity.healthKitValue,
+    'location': location.healthKitValue,
+    'route': recordRoute,
+  };
 }
 
 /// The running totals of a workout, as the watch last reported them.
@@ -252,6 +252,7 @@ class WorkoutSetup {
   const WorkoutSetup({
     required this.missingUsageDescriptions,
     required this.workoutProcessing,
+    this.backgroundLocation = false,
   });
 
   /// The usage-description keys the `Info.plist` lacks:
@@ -265,7 +266,15 @@ class WorkoutSetup {
   /// app is suspended when the wrist goes down, even mid-workout.
   final bool workoutProcessing;
 
-  /// Whether nothing is missing.
+  /// Whether `UIBackgroundModes` has `location`, which turns on background
+  /// location updates for the route. Recommended for a route recorded with
+  /// the wrist down; not needed for the rest of a workout. It has to be
+  /// `UIBackgroundModes`: CoreLocation ignores `location` under
+  /// `WKBackgroundModes`.
+  final bool backgroundLocation;
+
+  /// Whether nothing a workout needs is missing. [backgroundLocation] is not
+  /// counted.
   bool get isComplete => missingUsageDescriptions.isEmpty && workoutProcessing;
 }
 
@@ -293,6 +302,7 @@ class WorkoutException implements Exception {
   final int nativeCode;
 
   @override
-  String toString() => 'WorkoutException($code, $message'
+  String toString() =>
+      'WorkoutException($code, $message'
       '${nativeCode == 0 ? '' : ', nativeCode: $nativeCode'})';
 }

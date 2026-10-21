@@ -17,3 +17,7 @@ physical watch.
   description fail with a `WorkoutException` instead of terminating the app.
 * Native wakes Dart through one `NativeCallable.listener` that carries a
   signal kind; values come back as JSON through synchronous reads.
+* The route's `CLLocationManager` turns on `allowsBackgroundLocationUpdates`
+  when `UIBackgroundModes` has `location`, and `checkSetup()` reports it as
+  `backgroundLocation`.
+* `droppedLocationCount` starts again at 0 with each workout.

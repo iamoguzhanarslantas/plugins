@@ -26,6 +26,10 @@
 	<string>The example saves the workouts it records, with their routes, to Health.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>The example records the route of an outdoor workout.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>WKBackgroundModes</key>
 	<array>
 		<string>workout-processing</string>

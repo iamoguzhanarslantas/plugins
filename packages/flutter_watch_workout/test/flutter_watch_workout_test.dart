@@ -105,15 +105,15 @@ class _FakeBackend implements WorkoutBackend {
 }
 
 Map<String, Object?> _location(double latitude) => <String, Object?>{
-      'latitude': latitude,
-      'longitude': 29.0,
-      'altitude': 40.0,
-      'horizontalAccuracy': 5.0,
-      'verticalAccuracy': 3.0,
-      'speed': 3.2,
-      'course': 90.0,
-      'timestamp': 1792400000000,
-    };
+  'latitude': latitude,
+  'longitude': 29.0,
+  'altitude': 40.0,
+  'horizontalAccuracy': 5.0,
+  'verticalAccuracy': 3.0,
+  'speed': 3.2,
+  'course': 90.0,
+  'timestamp': 1792400000000,
+};
 
 void main() {
   late _FakeBackend fake;
@@ -144,42 +144,62 @@ void main() {
     });
 
     test('an indoor workout records no route unless asked', () async {
-      unawaited(workout.start(const WorkoutConfiguration(
-        activity: WorkoutActivity.running,
-        location: WorkoutLocationType.indoor,
-      )));
+      unawaited(
+        workout.start(
+          const WorkoutConfiguration(
+            activity: WorkoutActivity.running,
+            location: WorkoutLocationType.indoor,
+          ),
+        ),
+      );
       expect(jsonDecode(fake.lastConfiguration!)['route'], isFalse);
-      unawaited(workout.start(const WorkoutConfiguration(
-        activity: WorkoutActivity.running,
-        location: WorkoutLocationType.indoor,
-        recordRoute: true,
-      )));
+      unawaited(
+        workout.start(
+          const WorkoutConfiguration(
+            activity: WorkoutActivity.running,
+            location: WorkoutLocationType.indoor,
+            recordRoute: true,
+          ),
+        ),
+      );
       expect(jsonDecode(fake.lastConfiguration!)['route'], isTrue);
     });
 
-    test('a result that landed inside the call completes without a signal',
-        () async {
-      fake.immediateResult = jsonEncode(<String, Object?>{
-        'error': <String, Object?>{
-          'code': 'missingUsageDescription',
-          'message': "The watch app's Info.plist has no "
-              'NSHealthShareUsageDescription.',
-          'nativeCode': 0,
-        },
-      });
-      await expectLater(
-        workout.requestAuthorization(),
-        throwsA(isA<WorkoutException>()
-            .having((WorkoutException e) => e.code, 'code',
-                'missingUsageDescription')
-            .having((WorkoutException e) => e.message, 'message',
-                contains('NSHealthShareUsageDescription'))),
-      );
-    });
+    test(
+      'a result that landed inside the call completes without a signal',
+      () async {
+        fake.immediateResult = jsonEncode(<String, Object?>{
+          'error': <String, Object?>{
+            'code': 'missingUsageDescription',
+            'message':
+                "The watch app's Info.plist has no "
+                'NSHealthShareUsageDescription.',
+            'nativeCode': 0,
+          },
+        });
+        await expectLater(
+          workout.requestAuthorization(),
+          throwsA(
+            isA<WorkoutException>()
+                .having(
+                  (WorkoutException e) => e.code,
+                  'code',
+                  'missingUsageDescription',
+                )
+                .having(
+                  (WorkoutException e) => e.message,
+                  'message',
+                  contains('NSHealthShareUsageDescription'),
+                ),
+          ),
+        );
+      },
+    );
 
     test('a native error carries its code', () async {
-      final Future<void> started = workout
-          .start(const WorkoutConfiguration(activity: WorkoutActivity.running));
+      final Future<void> started = workout.start(
+        const WorkoutConfiguration(activity: WorkoutActivity.running),
+      );
       fake.finish(1, <String, Object?>{
         'error': <String, Object?>{
           'code': 'healthKit',
@@ -189,9 +209,11 @@ void main() {
       });
       await expectLater(
         started,
-        throwsA(isA<WorkoutException>()
-            .having((WorkoutException e) => e.code, 'code', 'healthKit')
-            .having((WorkoutException e) => e.nativeCode, 'nativeCode', 4)),
+        throwsA(
+          isA<WorkoutException>()
+              .having((WorkoutException e) => e.code, 'code', 'healthKit')
+              .having((WorkoutException e) => e.nativeCode, 'nativeCode', 4),
+        ),
       );
     });
 
@@ -208,8 +230,9 @@ void main() {
     });
 
     test('authorization without a route does not ask for location', () async {
-      final Future<WorkoutAuthorization> asked =
-          workout.requestAuthorization(route: false);
+      final Future<WorkoutAuthorization> asked = workout.requestAuthorization(
+        route: false,
+      );
       expect(fake.calls.single, 'requestAuthorization(route: false)');
       fake.finish(1, <String, Object?>{
         'workoutSharing': 'notDetermined',
@@ -231,7 +254,9 @@ void main() {
       final WorkoutSummary summary = await ended;
       expect(summary.uuid, 'A1B2');
       expect(
-          summary.duration, const Duration(seconds: 1800, milliseconds: 500));
+        summary.duration,
+        const Duration(seconds: 1800, milliseconds: 500),
+      );
       expect(summary.activeEnergy, 320.25);
       expect(summary.distance, 5012.0);
       expect(summary.routePoints, 1795);
@@ -265,34 +290,37 @@ void main() {
   });
 
   group('states', () {
-    test('a listener starts with the current state, then each change',
-        () async {
-      fake.nativeState = 0;
-      final List<WorkoutSessionState> seen = <WorkoutSessionState>[];
-      final StreamSubscription<WorkoutSessionState> sub =
-          workout.states.listen(seen.add);
-      await pumpEventQueue();
+    test(
+      'a listener starts with the current state, then each change',
+      () async {
+        fake.nativeState = 0;
+        final List<WorkoutSessionState> seen = <WorkoutSessionState>[];
+        final StreamSubscription<WorkoutSessionState> sub = workout.states
+            .listen(seen.add);
+        await pumpEventQueue();
 
-      fake.nativeState = 2;
-      fake.signal(kState);
-      fake.nativeState = 4;
-      fake.signal(kState);
-      await pumpEventQueue();
+        fake.nativeState = 2;
+        fake.signal(kState);
+        fake.nativeState = 4;
+        fake.signal(kState);
+        await pumpEventQueue();
 
-      expect(seen, <WorkoutSessionState>[
-        WorkoutSessionState.idle,
-        WorkoutSessionState.running,
-        WorkoutSessionState.paused,
-      ]);
-      await sub.cancel();
-      expect(fake.handler, isNull);
-    });
+        expect(seen, <WorkoutSessionState>[
+          WorkoutSessionState.idle,
+          WorkoutSessionState.running,
+          WorkoutSessionState.paused,
+        ]);
+        await sub.cancel();
+        expect(fake.handler, isNull);
+      },
+    );
 
     test('a repeated state is not repeated on the stream', () async {
       fake.nativeState = 2;
       final List<WorkoutSessionState> seen = <WorkoutSessionState>[];
-      final StreamSubscription<WorkoutSessionState> sub =
-          workout.states.listen(seen.add);
+      final StreamSubscription<WorkoutSessionState> sub = workout.states.listen(
+        seen.add,
+      );
       fake.signal(kState);
       fake.signal(kState);
       await pumpEventQueue();
@@ -301,12 +329,14 @@ void main() {
     });
 
     test('a late listener starts with the state now', () async {
-      final StreamSubscription<WorkoutSessionState> first =
-          workout.states.listen((_) {});
+      final StreamSubscription<WorkoutSessionState> first = workout.states
+          .listen((_) {});
       fake.nativeState = 2;
       fake.signal(kState);
       await expectLater(
-          workout.states.first, completion(WorkoutSessionState.running));
+        workout.states.first,
+        completion(WorkoutSessionState.running),
+      );
       await first.cancel();
     });
 
@@ -317,13 +347,15 @@ void main() {
   });
 
   group('metrics', () {
-    const String sample = '{"heartRate": 142.0, "activeEnergy": 81.5, '
+    const String sample =
+        '{"heartRate": 142.0, "activeEnergy": 81.5, '
         '"distance": 1204.0, "elapsed": 431.25, "timestamp": 1792400000000}';
 
     test('each signal emits the latest metrics', () async {
       final List<WorkoutMetrics> seen = <WorkoutMetrics>[];
-      final StreamSubscription<WorkoutMetrics> sub =
-          workout.metrics.listen(seen.add);
+      final StreamSubscription<WorkoutMetrics> sub = workout.metrics.listen(
+        seen.add,
+      );
       await pumpEventQueue();
       expect(seen, isEmpty, reason: 'no sample yet');
 
@@ -346,7 +378,8 @@ void main() {
     });
 
     test('a heart rate not yet read is null', () {
-      fake.metricsJson = '{"heartRate": null, "activeEnergy": 0, '
+      fake.metricsJson =
+          '{"heartRate": null, "activeEnergy": 0, '
           '"distance": 0, "elapsed": 0, "timestamp": 0}';
       expect(workout.latestMetrics!.heartRate, isNull);
     });
@@ -359,8 +392,9 @@ void main() {
         _location(41.1),
       ]);
       final List<WorkoutLocation> seen = <WorkoutLocation>[];
-      final StreamSubscription<WorkoutLocation> sub =
-          workout.locations.listen(seen.add);
+      final StreamSubscription<WorkoutLocation> sub = workout.locations.listen(
+        seen.add,
+      );
       await pumpEventQueue();
       expect(seen.map((WorkoutLocation l) => l.latitude), <double>[41.0, 41.1]);
 
@@ -379,10 +413,12 @@ void main() {
     test('two listeners both receive every point', () async {
       final List<WorkoutLocation> a = <WorkoutLocation>[];
       final List<WorkoutLocation> b = <WorkoutLocation>[];
-      final StreamSubscription<WorkoutLocation> subA =
-          workout.locations.listen(a.add);
-      final StreamSubscription<WorkoutLocation> subB =
-          workout.locations.listen(b.add);
+      final StreamSubscription<WorkoutLocation> subA = workout.locations.listen(
+        a.add,
+      );
+      final StreamSubscription<WorkoutLocation> subB = workout.locations.listen(
+        b.add,
+      );
       fake.bufferedLocations.add(_location(40.0));
       fake.signal(kLocations);
       await pumpEventQueue();
@@ -393,8 +429,8 @@ void main() {
     });
 
     test('points stay buffered natively while nothing listens', () async {
-      final StreamSubscription<WorkoutSessionState> keepAlive =
-          workout.states.listen((_) {});
+      final StreamSubscription<WorkoutSessionState> keepAlive = workout.states
+          .listen((_) {});
       fake.bufferedLocations.add(_location(40.0));
       fake.signal(kLocations);
       expect(fake.bufferedLocations, hasLength(1));
@@ -414,14 +450,19 @@ void main() {
         '{"code": "route", "message": "second", "nativeCode": 2}',
       ]);
       final List<WorkoutException> seen = <WorkoutException>[];
-      final StreamSubscription<WorkoutException> sub =
-          workout.errors.listen(seen.add);
+      final StreamSubscription<WorkoutException> sub = workout.errors.listen(
+        seen.add,
+      );
       await pumpEventQueue();
-      expect(seen.map((WorkoutException e) => e.message),
-          <String>['first', 'second']);
+      expect(seen.map((WorkoutException e) => e.message), <String>[
+        'first',
+        'second',
+      ]);
 
-      fake.errors.add('{"code": "location", "message": "third", '
-          '"nativeCode": 3}');
+      fake.errors.add(
+        '{"code": "location", "message": "third", '
+        '"nativeCode": 3}',
+      );
       fake.signal(kError);
       await pumpEventQueue();
       expect(seen.last.code, 'location');
@@ -429,12 +470,15 @@ void main() {
     });
 
     test('checkSetup reports what the Info.plist lacks', () {
-      fake.setup = '{"missing": ["NSHealthUpdateUsageDescription"], '
-          '"workoutProcessing": false}';
+      fake.setup =
+          '{"missing": ["NSHealthUpdateUsageDescription"], '
+          '"workoutProcessing": false, "backgroundLocation": true}';
       final WorkoutSetup setup = workout.checkSetup();
-      expect(setup.missingUsageDescriptions,
-          <String>['NSHealthUpdateUsageDescription']);
+      expect(setup.missingUsageDescriptions, <String>[
+        'NSHealthUpdateUsageDescription',
+      ]);
       expect(setup.workoutProcessing, isFalse);
+      expect(setup.backgroundLocation, isTrue);
       expect(setup.isComplete, isFalse);
     });
 

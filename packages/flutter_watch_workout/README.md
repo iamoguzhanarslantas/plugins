@@ -40,7 +40,7 @@ In `watchos/Runner/Info.plist`:
 And the HealthKit entitlement: a `watchos/Runner/Runner.entitlements` with
 `com.apple.developer.healthkit` set to true, named by
 `CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;` in the Runner
-target's build settings. The [example](example) has all four.
+target's build settings. The [example](example) has all four, and the background location mode below.
 
 `checkSetup()` reports what is missing. HealthKit and CoreLocation terminate
 an app that asks for access without the usage descriptions, so this package
@@ -48,6 +48,20 @@ checks for them first and fails the call with a `WorkoutException` instead.
 Without `workout-processing` the app is suspended when the wrist goes down,
 even mid-workout. Without the entitlement, authorization fails with a
 `healthKit` error.
+
+For a route recorded with the wrist down, also add `location` to
+`UIBackgroundModes`; the route's `CLLocationManager` then turns on
+`allowsBackgroundLocationUpdates`, which `checkSetup().backgroundLocation`
+reports. It has to be `UIBackgroundModes`: CoreLocation ignores `location`
+under `WKBackgroundModes`, and asserts if the flag turns on without the
+right key, so this package checks first.
+
+```xml
+<key>UIBackgroundModes</key>
+<array>
+	<string>location</string>
+</array>
+```
 
 ## Usage
 
@@ -118,8 +132,8 @@ the example shows.
 |---|---|
 | Host unit tests (`flutter test`) | ✅ pass (native backend faked) |
 | Integration test (`example/integration_test`) | ✅ passes on the watchOS 27.0 Simulator |
-| Example on the Simulator | ✅ authorization sheets, a running session with simulated heart rate and a simulated route, pause, resume, end with the route saved, and discard |
-| Physical watch | not yet checked: the background behaviour with the wrist down, real GPS, and recovery after a crash need a device |
+| Example on the Simulator | ✅ authorization sheets, a running session with simulated heart rate and a simulated route, pause, resume, end with the route saved, and discard; the route kept recording with the app sent to the background; after the app was killed mid-workout, `recover()` picked the session up on relaunch and it ended and saved |
+| Physical watch | not yet checked: the wrist going down (the Simulator has no wrist), real GPS and heart rate, and whether Dart itself keeps running in the background rather than catching up on return need a device |
 
 ## License
 

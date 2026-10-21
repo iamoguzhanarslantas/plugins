@@ -16,10 +16,10 @@ class WorkoutExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark(useMaterial3: true),
-        home: const WorkoutPage(),
-      );
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData.dark(useMaterial3: true),
+    home: const WorkoutPage(),
+  );
 }
 
 /// Start, pause, resume and end a run, and its live metrics.
@@ -48,18 +48,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void initState() {
     super.initState();
     _subscriptions
-      ..add(_workout.states.listen((WorkoutSessionState s) {
-        setState(() => _state = s);
-      }))
-      ..add(_workout.metrics.listen((WorkoutMetrics m) {
-        setState(() => _metrics = m);
-      }))
-      ..add(_workout.locations.listen((WorkoutLocation _) {
-        setState(() => _routePoints++);
-      }))
-      ..add(_workout.errors.listen((WorkoutException e) {
-        setState(() => _message = '${e.code}: ${e.message}');
-      }));
+      ..add(
+        _workout.states.listen((WorkoutSessionState s) {
+          setState(() => _state = s);
+        }),
+      )
+      ..add(
+        _workout.metrics.listen((WorkoutMetrics m) {
+          setState(() => _metrics = m);
+        }),
+      )
+      ..add(
+        _workout.locations.listen((WorkoutLocation _) {
+          setState(() => _routePoints++);
+        }),
+      )
+      ..add(
+        _workout.errors.listen((WorkoutException e) {
+          setState(() => _message = '${e.code}: ${e.message}');
+        }),
+      );
     // Redraws the elapsed time between metric samples.
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_state == WorkoutSessionState.running) {
@@ -96,24 +104,25 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _start() => _run(() async {
-        final WorkoutAuthorization auth = await _workout.requestAuthorization();
-        if (auth.workoutSharing != WorkoutPermission.authorized) {
-          _message = 'Allow saving workouts in Health to record one.';
-          return;
-        }
-        _routePoints = 0;
-        _message = null;
-        await _workout.start(
-          const WorkoutConfiguration(activity: WorkoutActivity.running),
-        );
-      });
+    final WorkoutAuthorization auth = await _workout.requestAuthorization();
+    if (auth.workoutSharing != WorkoutPermission.authorized) {
+      _message = 'Allow saving workouts in Health to record one.';
+      return;
+    }
+    _routePoints = 0;
+    _message = null;
+    await _workout.start(
+      const WorkoutConfiguration(activity: WorkoutActivity.running),
+    );
+  });
 
   Future<void> _end() => _run(() async {
-        final WorkoutSummary s = await _workout.end();
-        _message = 'Saved ${(s.distance / 1000).toStringAsFixed(2)} km, '
-            '${s.activeEnergy.round()} kcal, ${s.routePoints} route points'
-            '${s.routeSaved ? '' : ' (no route saved)'}.';
-      });
+    final WorkoutSummary s = await _workout.end();
+    _message =
+        'Saved ${(s.distance / 1000).toStringAsFixed(2)} km, '
+        '${s.activeEnergy.round()} kcal, ${s.routePoints} route points'
+        '${s.routeSaved ? '' : ' (no route saved)'}.';
+  });
 
   /// Active time now: the last sample's, plus the time since while running.
   Duration get _elapsed {
@@ -145,13 +154,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
           if (!_workout.isAvailable)
             const Text('HealthKit is not available on this device.'),
           if (_setup.missingUsageDescriptions.isNotEmpty)
-            Text('Info.plist lacks '
-                '${_setup.missingUsageDescriptions.join(', ')}.'),
+            Text(
+              'Info.plist lacks '
+              '${_setup.missingUsageDescriptions.join(', ')}.',
+            ),
           if (!_setup.workoutProcessing)
             const Text('WKBackgroundModes lacks workout-processing.'),
-          Text(_clock(_elapsed),
-              style:
-                  const TextStyle(fontSize: 30, fontWeight: FontWeight.w600)),
+          Text(
+            _clock(_elapsed),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+          ),
           Text('${m?.heartRate?.round() ?? '--'} bpm'),
           Text('${((m?.distance ?? 0) / 1000).toStringAsFixed(2)} km'),
           Text('${(m?.activeEnergy ?? 0).round()} kcal'),
@@ -159,8 +171,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
           if (_message != null)
             Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Text(_message!,
-                  style: const TextStyle(color: Colors.orangeAccent)),
+              child: Text(
+                _message!,
+                style: const TextStyle(color: Colors.orangeAccent),
+              ),
             ),
           const SizedBox(height: 8),
           if (!running && !paused)

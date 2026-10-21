@@ -61,7 +61,7 @@ then raised again after the last utterance.
 | Aspect | Result |
 |---|---|
 | Host unit tests (`flutter test`) | ✅ pass (native backend faked) |
-| Integration test (`example/integration_test`) | ✅ passes on the watchOS 27.0 Simulator: voices listed, an utterance played to the end, a queue stopped |
+| Integration test (`example/integration_test`) | ✅ passes on the watchOS 27.0 Simulator: voices listed, an utterance played to the end, one paused and continued, a queue stopped |
 | Physical watch | not yet checked: the speaker, Bluetooth headphones and ducking need a device |
 
 ## License

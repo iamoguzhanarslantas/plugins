@@ -106,10 +106,10 @@ class WorkoutConfiguration {
 
   /// The JSON the native side reads.
   Map<String, Object?> toJson() => <String, Object?>{
-    'activity': activity.healthKitValue,
-    'location': location.healthKitValue,
-    'route': recordRoute,
-  };
+        'activity': activity.healthKitValue,
+        'location': location.healthKitValue,
+        'route': recordRoute,
+      };
 }
 
 /// The running totals of a workout, as the watch last reported them.
@@ -302,7 +302,6 @@ class WorkoutException implements Exception {
   final int nativeCode;
 
   @override
-  String toString() =>
-      'WorkoutException($code, $message'
+  String toString() => 'WorkoutException($code, $message'
       '${nativeCode == 0 ? '' : ', nativeCode: $nativeCode'})';
 }

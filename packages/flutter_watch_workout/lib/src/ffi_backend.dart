@@ -29,78 +29,73 @@ class FfiWorkoutBackend implements WorkoutBackend {
   void Function(int kind)? _handler;
 
   late final void Function(Pointer<NativeFunction<_SignalNative>>)
-  _setCallback = _lib
-      .lookupFunction<
-        Void Function(Pointer<NativeFunction<_SignalNative>>),
-        void Function(Pointer<NativeFunction<_SignalNative>>)
-      >('flutter_watch_workout_set_callback');
-  late final int Function() _isAvailable = _lib
-      .lookupFunction<Int32 Function(), int Function()>(
-        'flutter_watch_workout_is_available',
-      );
-  late final Pointer<Utf8> Function() _setupReport = _lib
-      .lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
-        'flutter_watch_workout_setup_report',
-      );
-  late final int Function(int) _requestAuthorization = _lib
-      .lookupFunction<Int64 Function(Int32), int Function(int)>(
-        'flutter_watch_workout_request_authorization',
-      );
-  late final int Function(Pointer<Utf8>) _start = _lib
-      .lookupFunction<
-        Int64 Function(Pointer<Utf8>),
-        int Function(Pointer<Utf8>)
-      >('flutter_watch_workout_start');
-  late final void Function() _pause = _lib
-      .lookupFunction<Void Function(), void Function()>(
-        'flutter_watch_workout_pause',
-      );
-  late final void Function() _resume = _lib
-      .lookupFunction<Void Function(), void Function()>(
-        'flutter_watch_workout_resume',
-      );
-  late final int Function() _end = _lib
-      .lookupFunction<Int64 Function(), int Function()>(
-        'flutter_watch_workout_end',
-      );
-  late final int Function() _discard = _lib
-      .lookupFunction<Int64 Function(), int Function()>(
-        'flutter_watch_workout_discard',
-      );
-  late final int Function() _recover = _lib
-      .lookupFunction<Int64 Function(), int Function()>(
-        'flutter_watch_workout_recover',
-      );
-  late final int Function() _state = _lib
-      .lookupFunction<Int32 Function(), int Function()>(
-        'flutter_watch_workout_state',
-      );
-  late final Pointer<Utf8> Function() _metrics = _lib
-      .lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
-        'flutter_watch_workout_metrics',
-      );
-  late final Pointer<Utf8> Function() _pollLocations = _lib
-      .lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
-        'flutter_watch_workout_poll_locations',
-      );
-  late final int Function() _droppedLocationCount = _lib
-      .lookupFunction<Int64 Function(), int Function()>(
-        'flutter_watch_workout_dropped_location_count',
-      );
-  late final Pointer<Utf8> Function(int) _takeRequestResult = _lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Int64),
-        Pointer<Utf8> Function(int)
-      >('flutter_watch_workout_take_request_result');
-  late final Pointer<Utf8> Function() _takeLastError = _lib
-      .lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
-        'flutter_watch_workout_take_last_error',
-      );
-  late final void Function(Pointer<Utf8>) _release = _lib
-      .lookupFunction<
-        Void Function(Pointer<Utf8>),
-        void Function(Pointer<Utf8>)
-      >('flutter_watch_workout_release');
+      _setCallback = _lib.lookupFunction<
+              Void Function(Pointer<NativeFunction<_SignalNative>>),
+              void Function(Pointer<NativeFunction<_SignalNative>>)>(
+          'flutter_watch_workout_set_callback');
+  late final int Function() _isAvailable =
+      _lib.lookupFunction<Int32 Function(), int Function()>(
+    'flutter_watch_workout_is_available',
+  );
+  late final Pointer<Utf8> Function() _setupReport =
+      _lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+    'flutter_watch_workout_setup_report',
+  );
+  late final int Function(int) _requestAuthorization =
+      _lib.lookupFunction<Int64 Function(Int32), int Function(int)>(
+    'flutter_watch_workout_request_authorization',
+  );
+  late final int Function(Pointer<Utf8>) _start = _lib.lookupFunction<
+      Int64 Function(Pointer<Utf8>),
+      int Function(Pointer<Utf8>)>('flutter_watch_workout_start');
+  late final void Function() _pause =
+      _lib.lookupFunction<Void Function(), void Function()>(
+    'flutter_watch_workout_pause',
+  );
+  late final void Function() _resume =
+      _lib.lookupFunction<Void Function(), void Function()>(
+    'flutter_watch_workout_resume',
+  );
+  late final int Function() _end =
+      _lib.lookupFunction<Int64 Function(), int Function()>(
+    'flutter_watch_workout_end',
+  );
+  late final int Function() _discard =
+      _lib.lookupFunction<Int64 Function(), int Function()>(
+    'flutter_watch_workout_discard',
+  );
+  late final int Function() _recover =
+      _lib.lookupFunction<Int64 Function(), int Function()>(
+    'flutter_watch_workout_recover',
+  );
+  late final int Function() _state =
+      _lib.lookupFunction<Int32 Function(), int Function()>(
+    'flutter_watch_workout_state',
+  );
+  late final Pointer<Utf8> Function() _metrics =
+      _lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+    'flutter_watch_workout_metrics',
+  );
+  late final Pointer<Utf8> Function() _pollLocations =
+      _lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+    'flutter_watch_workout_poll_locations',
+  );
+  late final int Function() _droppedLocationCount =
+      _lib.lookupFunction<Int64 Function(), int Function()>(
+    'flutter_watch_workout_dropped_location_count',
+  );
+  late final Pointer<Utf8> Function(int) _takeRequestResult =
+      _lib.lookupFunction<
+          Pointer<Utf8> Function(Int64),
+          Pointer<Utf8> Function(
+              int)>('flutter_watch_workout_take_request_result');
+  late final Pointer<Utf8> Function() _takeLastError =
+      _lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+    'flutter_watch_workout_take_last_error',
+  );
+  late final void Function(Pointer<Utf8>) _release = _lib.lookupFunction<
+      Void Function(Pointer<Utf8>),
+      void Function(Pointer<Utf8>)>('flutter_watch_workout_release');
 
   /// Copies a native string out and releases it; null for a null pointer.
   String? _take(Pointer<Utf8> p) {
@@ -126,8 +121,9 @@ class FfiWorkoutBackend implements WorkoutBackend {
 
   @override
   int start(String configurationJson) => using(
-    (Arena arena) => _start(configurationJson.toNativeUtf8(allocator: arena)),
-  );
+        (Arena arena) =>
+            _start(configurationJson.toNativeUtf8(allocator: arena)),
+      );
 
   @override
   void pause() => _pause();
@@ -172,8 +168,8 @@ class FfiWorkoutBackend implements WorkoutBackend {
     final NativeCallable<_SignalNative> callable = _callable ??= () {
       final NativeCallable<_SignalNative> created =
           NativeCallable<_SignalNative>.listener(
-            (int kind) => _handler?.call(kind),
-          );
+        (int kind) => _handler?.call(kind),
+      );
       // A workout should not, by itself, keep the isolate alive.
       created.keepIsolateAlive = false;
       return created;

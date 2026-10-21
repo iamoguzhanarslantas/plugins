@@ -75,9 +75,10 @@ class WatchWorkout {
   /// need, and `healthKit` when the app lacks the HealthKit entitlement.
   Future<WorkoutAuthorization> requestAuthorization({
     bool route = true,
-  }) async => decodeAuthorization(
-    await _await(_backend.requestAuthorization(route: route)),
-  );
+  }) async =>
+      decodeAuthorization(
+        await _await(_backend.requestAuthorization(route: route)),
+      );
 
   /// Starts a workout session, and its route when
   /// [WorkoutConfiguration.recordRoute] is true.
@@ -133,17 +134,17 @@ class WatchWorkout {
 
   /// The session's state, starting with the current one, then each change.
   Stream<WorkoutSessionState> get states => Stream<WorkoutSessionState>.multi((
-    MultiStreamController<WorkoutSessionState> c,
-  ) {
-    final _StateListener listener = _StateListener(c);
-    _stateListeners.add(listener);
-    _updateRegistration();
-    listener.emit(state);
-    c.onCancel = () {
-      _stateListeners.remove(listener);
-      _updateRegistration();
-    };
-  }, isBroadcast: true);
+        MultiStreamController<WorkoutSessionState> c,
+      ) {
+        final _StateListener listener = _StateListener(c);
+        _stateListeners.add(listener);
+        _updateRegistration();
+        listener.emit(state);
+        c.onCancel = () {
+          _stateListeners.remove(listener);
+          _updateRegistration();
+        };
+      }, isBroadcast: true);
 
   /// The running totals, starting with [latestMetrics] when there are any,
   /// then each time the watch reports new ones.
@@ -178,16 +179,16 @@ class WatchWorkout {
   /// that could not be saved, a location error. A new listener first
   /// receives those queued while nothing listened (up to 32).
   Stream<WorkoutException> get errors => Stream<WorkoutException>.multi((
-    MultiStreamController<WorkoutException> c,
-  ) {
-    _errorListeners.add(c);
-    _updateRegistration();
-    _drainErrors();
-    c.onCancel = () {
-      _errorListeners.remove(c);
-      _updateRegistration();
-    };
-  }, isBroadcast: true);
+        MultiStreamController<WorkoutException> c,
+      ) {
+        _errorListeners.add(c);
+        _updateRegistration();
+        _drainErrors();
+        c.onCancel = () {
+          _errorListeners.remove(c);
+          _updateRegistration();
+        };
+      }, isBroadcast: true);
 
   bool get _wanted =>
       _pending.isNotEmpty ||
@@ -254,11 +255,9 @@ class WatchWorkout {
     if (_errorListeners.isEmpty) {
       return;
     }
-    for (
-      String? json = _backend.takeLastError();
-      json != null;
-      json = _backend.takeLastError()
-    ) {
+    for (String? json = _backend.takeLastError();
+        json != null;
+        json = _backend.takeLastError()) {
       final WorkoutException error = decodeError(decodeObject(json));
       for (final MultiStreamController<WorkoutException> c
           in _errorListeners.toList()) {

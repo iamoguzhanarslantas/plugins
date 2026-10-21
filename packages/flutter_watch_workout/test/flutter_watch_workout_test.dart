@@ -105,15 +105,15 @@ class _FakeBackend implements WorkoutBackend {
 }
 
 Map<String, Object?> _location(double latitude) => <String, Object?>{
-  'latitude': latitude,
-  'longitude': 29.0,
-  'altitude': 40.0,
-  'horizontalAccuracy': 5.0,
-  'verticalAccuracy': 3.0,
-  'speed': 3.2,
-  'course': 90.0,
-  'timestamp': 1792400000000,
-};
+      'latitude': latitude,
+      'longitude': 29.0,
+      'altitude': 40.0,
+      'horizontalAccuracy': 5.0,
+      'verticalAccuracy': 3.0,
+      'speed': 3.2,
+      'course': 90.0,
+      'timestamp': 1792400000000,
+    };
 
 void main() {
   late _FakeBackend fake;
@@ -171,8 +171,7 @@ void main() {
         fake.immediateResult = jsonEncode(<String, Object?>{
           'error': <String, Object?>{
             'code': 'missingUsageDescription',
-            'message':
-                "The watch app's Info.plist has no "
+            'message': "The watch app's Info.plist has no "
                 'NSHealthShareUsageDescription.',
             'nativeCode': 0,
           },
@@ -295,8 +294,8 @@ void main() {
       () async {
         fake.nativeState = 0;
         final List<WorkoutSessionState> seen = <WorkoutSessionState>[];
-        final StreamSubscription<WorkoutSessionState> sub = workout.states
-            .listen(seen.add);
+        final StreamSubscription<WorkoutSessionState> sub =
+            workout.states.listen(seen.add);
         await pumpEventQueue();
 
         fake.nativeState = 2;
@@ -329,8 +328,8 @@ void main() {
     });
 
     test('a late listener starts with the state now', () async {
-      final StreamSubscription<WorkoutSessionState> first = workout.states
-          .listen((_) {});
+      final StreamSubscription<WorkoutSessionState> first =
+          workout.states.listen((_) {});
       fake.nativeState = 2;
       fake.signal(kState);
       await expectLater(
@@ -347,8 +346,7 @@ void main() {
   });
 
   group('metrics', () {
-    const String sample =
-        '{"heartRate": 142.0, "activeEnergy": 81.5, '
+    const String sample = '{"heartRate": 142.0, "activeEnergy": 81.5, '
         '"distance": 1204.0, "elapsed": 431.25, "timestamp": 1792400000000}';
 
     test('each signal emits the latest metrics', () async {
@@ -378,8 +376,7 @@ void main() {
     });
 
     test('a heart rate not yet read is null', () {
-      fake.metricsJson =
-          '{"heartRate": null, "activeEnergy": 0, '
+      fake.metricsJson = '{"heartRate": null, "activeEnergy": 0, '
           '"distance": 0, "elapsed": 0, "timestamp": 0}';
       expect(workout.latestMetrics!.heartRate, isNull);
     });
@@ -429,8 +426,8 @@ void main() {
     });
 
     test('points stay buffered natively while nothing listens', () async {
-      final StreamSubscription<WorkoutSessionState> keepAlive = workout.states
-          .listen((_) {});
+      final StreamSubscription<WorkoutSessionState> keepAlive =
+          workout.states.listen((_) {});
       fake.bufferedLocations.add(_location(40.0));
       fake.signal(kLocations);
       expect(fake.bufferedLocations, hasLength(1));
@@ -470,8 +467,7 @@ void main() {
     });
 
     test('checkSetup reports what the Info.plist lacks', () {
-      fake.setup =
-          '{"missing": ["NSHealthUpdateUsageDescription"], '
+      fake.setup = '{"missing": ["NSHealthUpdateUsageDescription"], '
           '"workoutProcessing": false, "backgroundLocation": true}';
       final WorkoutSetup setup = workout.checkSetup();
       expect(setup.missingUsageDescriptions, <String>[

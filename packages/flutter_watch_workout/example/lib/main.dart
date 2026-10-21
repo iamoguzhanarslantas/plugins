@@ -16,10 +16,10 @@ class WorkoutExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData.dark(useMaterial3: true),
-    home: const WorkoutPage(),
-  );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(useMaterial3: true),
+        home: const WorkoutPage(),
+      );
 }
 
 /// Start, pause, resume and end a run, and its live metrics.
@@ -104,25 +104,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _start() => _run(() async {
-    final WorkoutAuthorization auth = await _workout.requestAuthorization();
-    if (auth.workoutSharing != WorkoutPermission.authorized) {
-      _message = 'Allow saving workouts in Health to record one.';
-      return;
-    }
-    _routePoints = 0;
-    _message = null;
-    await _workout.start(
-      const WorkoutConfiguration(activity: WorkoutActivity.running),
-    );
-  });
+        final WorkoutAuthorization auth = await _workout.requestAuthorization();
+        if (auth.workoutSharing != WorkoutPermission.authorized) {
+          _message = 'Allow saving workouts in Health to record one.';
+          return;
+        }
+        _routePoints = 0;
+        _message = null;
+        await _workout.start(
+          const WorkoutConfiguration(activity: WorkoutActivity.running),
+        );
+      });
 
   Future<void> _end() => _run(() async {
-    final WorkoutSummary s = await _workout.end();
-    _message =
-        'Saved ${(s.distance / 1000).toStringAsFixed(2)} km, '
-        '${s.activeEnergy.round()} kcal, ${s.routePoints} route points'
-        '${s.routeSaved ? '' : ' (no route saved)'}.';
-  });
+        final WorkoutSummary s = await _workout.end();
+        _message = 'Saved ${(s.distance / 1000).toStringAsFixed(2)} km, '
+            '${s.activeEnergy.round()} kcal, ${s.routePoints} route points'
+            '${s.routeSaved ? '' : ' (no route saved)'}.';
+      });
 
   /// Active time now: the last sample's, plus the time since while running.
   Duration get _elapsed {

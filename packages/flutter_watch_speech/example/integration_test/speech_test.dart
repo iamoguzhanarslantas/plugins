@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 //
 // Against the real AVSpeechSynthesizer, on a watch Simulator: every symbol
-// resolves, voices are listed, and an utterance plays to the end or stops.
+// resolves, voices are listed, and an utterance plays to the end, pauses and
+// continues, or stops.
 //
 // Run with:
 //   flutter-watchos drive --driver=test_driver/integration_test.dart \
@@ -37,6 +38,33 @@ void main() {
     expect(seen.last, SpeechEventType.finished);
     await sub.cancel();
     expect(speech.isSpeaking, isFalse);
+  });
+
+  testWidgets('an utterance pauses and continues to the end',
+      (WidgetTester _) async {
+    final List<SpeechEventType> seen = <SpeechEventType>[];
+    final StreamSubscription<SpeechEvent> sub =
+        speech.events.listen((SpeechEvent e) => seen.add(e.type));
+    final Future<SpeechOutcome> spoken = speech
+        .speak('This sentence is long enough to be paused before it ends.');
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    expect(await speech.pause(), isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    expect(speech.isPaused, isTrue);
+    expect(speech.isSpeaking, isTrue, reason: 'paused still counts');
+    expect(await speech.resume(), isTrue);
+    expect(await spoken.timeout(const Duration(seconds: 20)),
+        SpeechOutcome.finished);
+    await sub.cancel();
+    expect(
+        seen,
+        containsAllInOrder(<SpeechEventType>[
+          SpeechEventType.started,
+          SpeechEventType.paused,
+          SpeechEventType.continued,
+          SpeechEventType.finished,
+        ]));
+    expect(speech.isPaused, isFalse);
   });
 
   testWidgets('stop cancels what is speaking and what is queued',
